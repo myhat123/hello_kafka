@@ -5,8 +5,9 @@ https://kafka.apache.org/downloads.html
 Step 1: 下载解压源代码
 ====================
 
-tar zxvf kafka_2.12-2.4.0.tar.gz
-cd kafka_2.12-2.4.0
+> tar zxvf kafka_2.12-2.4.0.tar.gz
+
+> cd kafka_2.12-2.4.0
 
 Step 2: 启动服务
 ===============
@@ -19,6 +20,7 @@ kafka自带打包和配置好的Zookeeper。
 
 config/zookeeper.properties
 
+```ini
     # the directory where the snapshot is stored.
     dataDir=/tmp/zookeeper
     # the port at which the clients will connect
@@ -29,20 +31,23 @@ config/zookeeper.properties
     # Set the port to something non-conflicting if choosing to enable this
     admin.enableServer=false
     # admin.serverPort=8080
+```
 
 bin/zookeeper-server-start.sh
 
+```bash
     ......
     exec $base_dir/kafka-run-class.sh $EXTRA_ARGS org.apache.zookeeper.server.quorum.QuorumPeerMain "$@"
+```
 
-$ bin/zookeeper-server-start.sh config/zookeeper.properties
+> $ bin/zookeeper-server-start.sh config/zookeeper.properties
     默认2181端口
 
 启动kafka服务
 ------------
 
 config/server.properties
-
+```ini
     # see kafka.server.KafkaConfig for additional details and defaults
 
     ############################# Server Basics #############################
@@ -97,13 +102,16 @@ config/server.properties
     # This value is recommended to be increased for installations with data dirs located in RAID array.
     num.recovery.threads.per.data.dir=1
     ......
+```
 
 bin/kafka-server-start.sh
 
+```bash
     ......
     exec $base_dir/kafka-run-class.sh $EXTRA_ARGS kafka.Kafka "$@"
+```
 
-$ bin/kafka-server-start.sh config/server.properties &
+> $ bin/kafka-server-start.sh config/server.properties &
     默认9092端口
 
 Step 3: 创建一个主题(topic)
@@ -111,16 +119,19 @@ Step 3: 创建一个主题(topic)
 
 bin/kafka-topics.sh
 -------------------
+
+```bash
     ......
     exec $(dirname $0)/kafka-run-class.sh kafka.admin.TopicCommand "$@"
+```
 
 创建一个名为“test”的Topic，只有一个分区和一个备份：
 
-$ bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic test
+> $ bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic test
 
 创建好之后，可以通过运行以下命令，查看已创建的topic信息：
 
-$ bin/kafka-topics.sh --list --zookeeper localhost:2181
+> $ bin/kafka-topics.sh --list --zookeeper localhost:2181
 
 test
 
@@ -131,9 +142,10 @@ zookeeper cli命令行
 
 http://zookeeper.apache.org/releases.html
 
-参考教程
+参考教程  
 https://www.w3cschool.cn/zookeeper/zookeeper_installation.html
 
+```bash
 $ bin/zkCli.sh
 
 ls /brokers
@@ -146,6 +158,7 @@ get /brokers/topics/test
 [test]
 [zk: localhost:2181(CONNECTED) 12] get /brokers/topics/test
 {"version":2,"partitions":{"0":[0]},"adding_replicas":{},"removing_replicas":{}}
+```
 
 Step 4: 发送消息
 ===============
@@ -155,12 +168,16 @@ Kafka提供了一个命令行的工具，可以从输入文件或者命令行中
 
 bin/kafka-console-producer.sh
 -----------------------------
+```bash
     ......
     exec $(dirname $0)/kafka-run-class.sh kafka.tools.ConsoleProducer "$@"
+```
 
+```bash
 $ bin/kafka-console-producer.sh --broker-list localhost:9092 --topic test
 >This is a message
 >This is another message
+```
 
 Step 5: 消费消息
 ================
@@ -169,10 +186,12 @@ Step 5: 消费消息
 
 bin/kafka-console-consumer.sh
 -----------------------------
+```bash
     ......
     exec $(dirname $0)/kafka-run-class.sh kafka.tools.ConsoleConsumer "$@"
+```
 
-$ bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test --from-beginning
+> $ bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test --from-beginning
 
 不同的终端上运行上述命令，那么当你在运行生产者时，消费者就能消费到生产者发送的消息。
 即：回到 Step 4 生产新的消息，消费者可以马上收到新的消息
@@ -183,9 +202,9 @@ Step 4 退出，Step 5也同样退出，再进入 Step 5 仍然可以看到全�
 关闭kafka服务
 ============
 
-$ bin/kafka-server-stop.sh
+> $ bin/kafka-server-stop.sh
 
 关闭zookeeper服务
 ================
 
-$ bin/zookeeper-server-stop.sh
+> $ bin/zookeeper-server-stop.sh
